@@ -26,7 +26,7 @@ import com.squareup.moshi.Json
  */
 data class Pet (
     @Json(name = "name")
-    val name: kotlin.String,
+    val name: kotlin.String?,
     @Json(name = "photoUrls")
     val photoUrls: kotlin.Array<kotlin.String>,
     @Json(name = "id")

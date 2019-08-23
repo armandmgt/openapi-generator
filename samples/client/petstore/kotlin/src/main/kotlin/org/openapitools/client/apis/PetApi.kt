@@ -26,6 +26,8 @@ import org.openapitools.client.infrastructure.ResponseType
 import org.openapitools.client.infrastructure.Success
 import org.openapitools.client.infrastructure.toMultiValue
 
+import org.openapitools.client.infrastructure.Serializer
+
 class PetApi(basePath: kotlin.String = "http://petstore.swagger.io/v2") : ApiClient(basePath) {
 
     /**
@@ -112,7 +114,12 @@ class PetApi(basePath: kotlin.String = "http://petstore.swagger.io/v2") : ApiCli
         )
 
         return when (response.responseType) {
-            ResponseType.Success -> (response as Success<*>).data as kotlin.Array<Pet>
+            ResponseType.Success -> {
+                val res = (response as Success<*>).data as kotlin.Array<Pet>
+                val p = res.find { e -> e.name == null }
+                java.util.logging.Logger.getLogger("logger").warning(Serializer.moshi.adapter(Pet::class.java).toJson(p!!))
+                return (response as Success<*>).data as kotlin.Array<Pet>
+            }
             ResponseType.Informational -> throw UnsupportedOperationException("Client does not support Informational responses.")
             ResponseType.Redirection -> throw UnsupportedOperationException("Client does not support Redirection responses.")
             ResponseType.ClientError -> throw ClientException((response as ClientError<*>).body as? String ?: "Client error")
